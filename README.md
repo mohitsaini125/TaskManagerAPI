@@ -1,4 +1,4 @@
-# Blog API
+# TaskManager API
 A RESTful TaskManager API built using Node.js, Express.js, MongoDB, and Mongoose following the MVC architecture.
 
 ## Overview
