@@ -2,7 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import taskRouter from "./routes/task.router.js";
 
-const dbURL = "enter your mongodb connection string here"
+const dbURL = "enter your mongoDB connection string here"
 
 const server = express();
 

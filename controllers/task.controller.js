@@ -24,12 +24,63 @@ export const createTask = async (req, res)=>{
 }
 
 export const getAllTask = async (req, res)=>{
+    //pagination
+    const page = Number.parseInt(req.query.page) || 1;
+    const limit = 3;
+    let skip = limit*(page - 1) 
+    //sorting
+    const sort = req.query.sort;
+    const order =req.query.order;
+    const sortOptions = {};
+    let sortNumber = 1;
+    if(order == "desc") {
+        sortNumber = -1;
+    }
+    if(sort) {
+        if(sort == "task") {
+            sortOptions.task = sortNumber;
+        } else if (sort == "description") {
+            sortOptions.description = sortNumber;
+        }
+    }
+
+    //query
+    const q = req.query.q;
+    const status = req.query.status;
+    const query = {};
+    if(status) {
+        query.status = status
+    }
+    if(q) {
+        query.$or = [
+            {
+                task : {
+                    $regex : q,
+                    $options : "i"
+                }
+            },
+            {
+                description : {
+                    $regex : q,
+                    $options : "i"
+                }
+            }
+        ]
+    }
+
+
     try {
-        const tasks = await Task.find();
+    const tasks = await Task
+    .find(query)
+    .sort(sortOptions)
+    .limit(limit)
+    .skip(skip)
+    const totalTasks = await Task.countDocuments(query);
         return res.json({
             success : true,
             data : tasks,
-            message : "tasks fetched successfully"
+            message : "tasks fetched successfully",
+            totalResults : totalTasks
         })
     } catch(err) {
         res.json({
